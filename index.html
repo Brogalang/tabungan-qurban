@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="id">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Tabungan Qurban</title>
+      <style>
+         :root {
+            --green: #176b4d;
+            --green2: #e7f5ed;
+            --ink: #20312b;
+            --muted: #6b7b74;
+            --line: #dce6e0;
+            --bg: #f4f7f5;
+            --red: #fce5e5;
+            --red-ink: #a83232;
+            --yellow: #fff3cf;
+            --yellow-ink: #8a6400;
+         }
+
+         * {
+            box-sizing: border-box;
+         }
+
+         body {
+            margin: 0;
+            background: var(--bg);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            color: var(--ink);
+         }
+
+         header {
+            background: linear-gradient(120deg, #104d39, #21805b);
+            color: white;
+            padding: 30px 20px 68px;
+         }
+
+         .wrap {
+            max-width: 1200px;
+            margin: auto;
+         }
+
+         .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-size: 12px;
+            opacity: 0.8;
+            font-weight: 700;
+         }
+
+         h1 {
+            margin: 8px 0;
+            font-size: clamp(26px, 4vw, 38px);
+         }
+
+         header p {
+            margin: 0;
+            opacity: 0.85;
+         }
+
+         main {
+            max-width: 1200px;
+            margin: -42px auto 40px;
+            padding: 0 18px;
+         }
+
+         .cards {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+         }
+
+         .card,
+         .panel {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: 0 6px 24px #173d2b0a;
+         }
+
+         .card {
+            padding: 18px;
+         }
+
+         .card .label {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 600;
+         }
+
+         .card .value {
+            font-size: clamp(20px, 2.5vw, 28px);
+            font-weight: 800;
+            margin-top: 8px;
+            letter-spacing: -0.03em;
+         }
+
+         .card small {
+            display: block;
+            color: var(--muted);
+            margin-top: 5px;
+         }
+
+         .panel {
+            padding: 20px;
+            margin-bottom: 18px;
+         }
+
+         .panel-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+         }
+
+         h2 {
+            font-size: 18px;
+            margin: 0;
+         }
+
+         .hint {
+            font-size: 12px;
+            color: var(--muted);
+         }
+
+         .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+         }
+
+         table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 780px;
+            font-size: 14px;
+         }
+
+         th,
+         td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--line);
+            text-align: right;
+         }
+
+         th {
+            background: #f0f6f2;
+            color: #345346;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+         }
+
+         th:first-child,
+         td:first-child {
+            text-align: left;
+         }
+
+         tbody tr:hover {
+            background: #f8fbf9;
+         }
+
+         tfoot td {
+            font-weight: 800;
+            background: #f0f6f2;
+            border-bottom: 0;
+         }
+
+         input[type="number"] {
+            width: 100%;
+            min-width: 90px;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            padding: 7px 8px;
+            font: inherit;
+            text-align: right;
+            color: var(--ink);
+            background: transparent;
+         }
+
+         input:focus {
+            outline: 2px solid #78b89a;
+            border-color: #78b89a;
+            background: white;
+         }
+
+         .money {
+            white-space: nowrap;
+         }
+
+         .subgrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+         }
+
+         .formrow {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            align-items: center;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--line);
+         }
+
+         .formrow:last-child {
+            border-bottom: 0;
+         }
+
+         .formrow label {
+            font-size: 14px;
+            color: var(--muted);
+         }
+
+         .formrow input {
+            border: 1px solid var(--line);
+            background: white;
+         }
+
+         .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+         }
+
+         .status.ok {
+            background: var(--green2);
+            color: var(--green);
+         }
+         .status.low {
+            background: var(--red);
+            color: var(--red-ink);
+         }
+         .status.high {
+            background: var(--yellow);
+            color: var(--yellow-ink);
+         }
+
+         .chart-list {
+            display: grid;
+            gap: 13px;
+         }
+
+         .barrow {
+            display: grid;
+            grid-template-columns: minmax(100px, 150px) 1fr auto;
+            gap: 12px;
+            align-items: center;
+            font-size: 13px;
+         }
+
+         .track {
+            height: 13px;
+            background: #edf2ef;
+            border-radius: 20px;
+            overflow: hidden;
+         }
+
+         .bar {
+            height: 100%;
+            background: linear-gradient(90deg, #21805b, #68bd8d);
+            border-radius: 20px;
+            transition: width 0.2s;
+         }
+
+         .barlabel {
+            font-weight: 700;
+            white-space: nowrap;
+         }
+
+         .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+         }
+
+         .btn {
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            padding: 9px 13px;
+            background: white;
+            color: var(--ink);
+            font-weight: 700;
+            cursor: pointer;
+         }
+
+         .btn.primary {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+         }
+
+         .btn:hover {
+            filter: brightness(0.97);
+         }
+
+         .note {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin: 12px 0 0;
+         }
+
+         .saldo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 12px;
+            background: #f0f6f2;
+            margin-top: 12px;
+         }
+
+         .saldo strong {
+            font-size: 20px;
+         }
+         .negative {
+            color: var(--red-ink);
+         }
+
+         footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            padding: 5px 15px 28px;
+         }
+
+         @media (max-width: 800px) {
+            .cards {
+               grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .subgrid {
+               grid-template-columns: 1fr;
+            }
+            .panel {
+               padding: 14px;
+            }
+         }
+
+         @media (max-width: 420px) {
+            .cards {
+               gap: 8px;
+            }
+            .card {
+               padding: 13px;
+            }
+            .card .value {
+               font-size: 20px;
+            }
+            .barrow {
+               grid-template-columns: 85px 1fr;
+               gap: 8px;
+            }
+            .barlabel {
+               grid-column: 2;
+               text-align: right;
+            }
+         }
+      </style>
+   </head>
+   <body>
+      <header>
+         <div class="wrap">
+            <div class="eyebrow">Rencana keuangan keluarga</div>
+            <h1 id="pageHeading"></h1>
+            <p>
+               Pantau setoran bulanan, total tabungan, pengeluaran, dan saldo
+               secara praktis.
+            </p>
+         </div>
+      </header>
+      <main>
+         <section class="cards">
+            <div class="card">
+               <div class="label">Total tabungan</div>
+               <div class="value" id="totalSaving">Rp 0</div>
+               <small> Akumulasi semua peserta </small>
+            </div>
+            <div class="card">
+               <div class="label">Total pengeluaran</div>
+               <div class="value" id="totalExpense">Rp 0</div>
+               <small> DP + pelunasan </small>
+            </div>
+            <div class="card">
+               <div class="label">Saldo saat ini</div>
+               <div class="value" id="balance">Rp 0</div>
+               <small> Tabungan dikurangi pengeluaran </small>
+            </div>
+            <div class="card">
+               <div class="label">Target tabungan</div>
+               <div class="value" id="targetValue">Rp 0</div>
+               <small> Target yang direncanakan </small>
+            </div>
+         </section>
+         <section class="panel">
+            <div class="panel-head">
+               <div>
+                  <h2>Setoran per bulan</h2>
+                  <div class="hint">Edit nominal, total dihitung otomatis.</div>
+               </div>
+               <div class="actions">
+                  <button class="btn" onclick="resetData()">
+                     Reset contoh
+                  </button>
+                  <button class="btn primary" onclick="window.print()">
+                     Cetak / Simpan PDF
+                  </button>
+               </div>
+            </div>
+            <div class="table-wrap">
+               <table id="savingTable">
+                  <thead>
+                     <tr>
+                        <th>Bulan</th>
+                        <th id="personHeading0"></th>
+                        <th id="personHeading1"></th>
+                        <th id="personHeading2"></th>
+                        <th id="personHeading3"></th>
+                        <th>Total per bulan</th>
+                     </tr>
+                  </thead>
+                  <tbody id="savingBody"></tbody>
+                  <tfoot>
+                     <tr>
+                        <td>Total tabungan</td>
+                        <td id="person0">Rp 0</td>
+                        <td id="person1">Rp 0</td>
+                        <td id="person2">Rp 0</td>
+                        <td id="person3">Rp 0</td>
+                        <td id="grandTotal">Rp 0</td>
+                     </tr>
+                  </tfoot>
+               </table>
+            </div>
+            <p class="note">
+               Periode dan nominal awal diatur melalui CONFIG pada JavaScript.
+            </p>
+         </section>
+         <section class="panel">
+            <div class="panel-head">
+               <h2>Diagram tabungan per peserta</h2>
+               <span class="hint"> Berdasarkan total setoran </span>
+            </div>
+            <div id="participantChart" class="chart-list"></div>
+         </section>
+         <section class="subgrid">
+            <div class="panel">
+               <div class="panel-head">
+                  <h2>Pengeluaran qurban</h2>
+                  <span class="hint"> Isi nominal jika ada </span>
+               </div>
+               <div class="formrow">
+                  <label for="dp"> DP </label>
+                  <input
+                     id="dp"
+                     type="number"
+                     min="0"
+                     step="50000"
+                     oninput="update()"
+                  />
+               </div>
+               <div class="formrow">
+                  <label for="pelunasan"> Pelunasan </label>
+                  <input
+                     id="pelunasan"
+                     type="number"
+                     min="0"
+                     step="50000"
+                     oninput="update()"
+                  />
+               </div>
+               <div class="formrow">
+                  <label for="target"> Target tabungan </label>
+                  <input
+                     id="target"
+                     type="number"
+                     min="0"
+                     step="100000"
+                     oninput="update()"
+                  />
+               </div>
+               <div class="saldo">
+                  <span> Total pengeluaran </span>
+                  <strong id="expenseTotal"> Rp 0 </strong>
+               </div>
+            </div>
+            <div class="panel">
+               <div class="panel-head">
+                  <h2>Ringkasan saldo</h2>
+                  <span class="hint"> Status otomatis </span>
+               </div>
+               <div class="formrow">
+                  <label> Total tabungan </label>
+                  <strong id="summarySaving"> Rp 0 </strong>
+               </div>
+               <div class="formrow">
+                  <label> Total pengeluaran </label>
+                  <strong id="summaryExpense"> Rp 0 </strong>
+               </div>
+               <div class="formrow">
+                  <label> Selisih / saldo </label>
+                  <strong id="difference"> Rp 0 </strong>
+               </div>
+               <div class="formrow">
+                  <label> Status </label>
+                  <span id="status" class="status ok"> Lunas / sesuai </span>
+               </div>
+               <div class="saldo">
+                  <span> Saldo BSI </span>
+                  <strong id="bsi"> Rp 0 </strong>
+               </div>
+               <p class="note">
+                  Kurang bayar berarti pengeluaran melebihi tabungan. Lebih
+                  bayar berarti saldo masih tersisa.
+               </p>
+            </div>
+         </section>
+      </main>
+      <footer>
+         <span id="footerTitle"> </span>
+         · Data di halaman ini belum tersimpan permanen.
+      </footer>
+      <script>
+          // ======================================================
+          // KONFIGURASI UTAMA
+          // Semua pengaturan awal dilakukan di bagian ini saja.
+          // ======================================================
+
+          const CONFIG = {
+              title: "Tabungan Qurban 17 Mei 2027",
+
+              months: [
+                  "Juli",
+                  "Agustus",
+                  "September",
+                  "Oktober",
+                  "November",
+                  "Desember",
+                  "Januari",
+                  "Februari",
+                  "Maret",
+                  "April",
+                  "Mei",
+              ],
+
+              people: ["Papah & Mamah", "Galih & Aghnia", "Galang & Ningrum", "Fia"],
+
+              // Tabungan awal setiap peserta.
+              // Nama bulan dan nama peserta harus sesuai dengan daftar di atas.
+              initialSavings: [
+                  { month: "Juli", person: "Papah & Mamah", amount: 1000000 },
+                  { month: "Agustus", person: "Papah & Mamah", amount: 1000000 },
+                  { month: "September", person: "Papah & Mamah", amount: 500000 },
+                  { month: "Oktober", person: "Galang & Ningrum", amount: 0 },
+              ],
+
+              // Nilai awal pengeluaran dan target.
+              initialExpenses: {
+                  dp: 0,
+                  pelunasan: 0,
+                  target: 0,
+              },
+          };
+
+          // ======================================================
+          // INISIALISASI DATA
+          // ======================================================
+
+          const months = CONFIG.months;
+          const people = CONFIG.people;
+
+          function createInitialData() {
+              const result = months.map(() => people.map(() => 0));
+
+              CONFIG.initialSavings.forEach(({ month, person, amount }) => {
+                  const monthIndex = months.indexOf(month);
+                  const personIndex = people.indexOf(person);
+
+                  if (monthIndex !== -1 && personIndex !== -1) {
+                      result[monthIndex][personIndex] = amount;
+                  } else {
+                      console.warn("Bulan atau peserta tidak ditemukan:", month, person);
+                  }
+              });
+
+              return result;
+          }
+
+          let data = createInitialData();
+
+          const rupiah = (value) => "Rp " + Math.round(Number(value) || 0).toLocaleString("id-ID");
+
+          // Terapkan konfigurasi judul dan nama peserta.
+          document.title = CONFIG.title;
+          document.getElementById("pageHeading").textContent = CONFIG.title;
+          document.getElementById("footerTitle").textContent = CONFIG.title;
+
+          people.forEach((person, index) => {
+              document.getElementById("personHeading" + index).textContent = person + " (Rp)";
+          });
+
+          // ======================================================
+          // RENDER TABEL
+          // ======================================================
+
+          function renderTable() {
+              const body = document.getElementById("savingBody");
+              body.innerHTML = "";
+
+              data.forEach((row, i) => {
+                  const tr = document.createElement("tr");
+
+                  const monthCell = document.createElement("td");
+                  monthCell.textContent = months[i];
+                  tr.appendChild(monthCell);
+
+                  row.forEach((value, j) => {
+                      const td = document.createElement("td");
+                      const input = document.createElement("input");
+
+                      input.type = "number";
+                      input.min = "0";
+                      input.step = "50000";
+                      input.value = value;
+                      input.setAttribute("aria-label", months[i] + " " + people[j]);
+
+                      input.addEventListener("input", () => {
+                          data[i][j] = Math.max(0, Number(input.value) || 0);
+                          update();
+                      });
+
+                      td.appendChild(input);
+                      tr.appendChild(td);
+                  });
+
+                  const totalCell = document.createElement("td");
+                  totalCell.className = "money";
+                  totalCell.id = "monthTotal" + i;
+                  totalCell.textContent = rupiah(row.reduce((a, b) => a + b, 0));
+
+                  tr.appendChild(totalCell);
+                  body.appendChild(tr);
+              });
+
+              update();
+          }
+
+          // ======================================================
+          // PERHITUNGAN TOTAL, DIAGRAM, DAN SALDO
+          // ======================================================
+
+          function update() {
+              const totals = people.map((_, j) => data.reduce((sum, row) => sum + (Number(row[j]) || 0), 0));
+
+              const total = totals.reduce((a, b) => a + b, 0);
+
+              const dp = Math.max(0, Number(document.getElementById("dp").value) || 0);
+
+              const pelunasan = Math.max(0, Number(document.getElementById("pelunasan").value) || 0);
+
+              const expense = dp + pelunasan;
+
+              const balance = total - expense;
+
+              const target = Math.max(0, Number(document.getElementById("target").value) || 0);
+
+              // Total per bulan.
+              data.forEach((row, i) => {
+                  const el = document.getElementById("monthTotal" + i);
+
+                  if (el) {
+                      el.textContent = rupiah(row.reduce((sum, value) => sum + (Number(value) || 0), 0));
+                  }
+              });
+
+              // Total per peserta.
+              totals.forEach((value, index) => {
+                  document.getElementById("person" + index).textContent = rupiah(value);
+              });
+
+              // Dashboard.
+              document.getElementById("grandTotal").textContent = rupiah(total);
+              document.getElementById("totalSaving").textContent = rupiah(total);
+              document.getElementById("totalExpense").textContent = rupiah(expense);
+              document.getElementById("balance").textContent = rupiah(balance);
+              document.getElementById("targetValue").textContent = rupiah(target);
+
+              // Ringkasan pengeluaran dan saldo.
+              document.getElementById("expenseTotal").textContent = rupiah(expense);
+              document.getElementById("summarySaving").textContent = rupiah(total);
+              document.getElementById("summaryExpense").textContent = rupiah(expense);
+              document.getElementById("difference").textContent = rupiah(balance);
+              document.getElementById("bsi").textContent = rupiah(balance);
+
+              document.getElementById("balance").classList.toggle("negative", balance < 0);
+
+              document.getElementById("bsi").classList.toggle("negative", balance < 0);
+
+              // Status otomatis.
+              const status = document.getElementById("status");
+
+              status.className = "status " + (balance < 0 ? "low" : balance > 0 ? "high" : "ok");
+
+              status.textContent = balance < 0 ? "Kurang bayar" : balance > 0 ? "Lebih bayar" : "Lunas / sesuai";
+
+              // Diagram per peserta.
+              const max = Math.max(...totals, 1);
+
+              document.getElementById("participantChart").innerHTML = totals
+                  .map(
+                      (value, index) => `
+                <div class="barrow">
+                  <span>
+                    ${people[index]}
+                  </span>
+                  <div class="track">
+                    <div class="bar" style="width:${Math.max(0, (value / max) * 100)}%">
+                    </div>
+                  </div>
+                  <span class="barlabel">
+                    ${rupiah(value)}
+                  </span>
+                </div>
+                `
+                  )
+                  .join("");
+          }
+
+          // ======================================================
+          // RESET KE DATA AWAL DARI CONFIG
+          // ======================================================
+
+          function resetData() {
+              if (!confirm("Kembalikan ke data contoh awal?")) return;
+
+              data = createInitialData();
+
+              document.getElementById("dp").value = CONFIG.initialExpenses.dp;
+              document.getElementById("pelunasan").value = CONFIG.initialExpenses.pelunasan;
+              document.getElementById("target").value = CONFIG.initialExpenses.target;
+
+              renderTable();
+          }
+
+          // ======================================================
+          // INISIALISASI HALAMAN
+          // ======================================================
+
+          document.getElementById("dp").value = CONFIG.initialExpenses.dp;
+          document.getElementById("pelunasan").value = CONFIG.initialExpenses.pelunasan;
+          document.getElementById("target").value = CONFIG.initialExpenses.target;
+
+          renderTable();
+      </script>
+   </body>
+</html>
